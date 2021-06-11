@@ -1,0 +1,8 @@
+[Unit]
+Description=Turns off Nvidia Card at boot
+
+[Service]
+ExecStart=/bin/sh -c "echo '\_SB_.PCI0.PEG0.PEGP._OFF' > /proc/acpi/call"
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,32 @@
+#!/bin/bash
+
+PREFIX='/usr/local'
+SYSTEMD='/etc/systemd/system'
+
+install () {
+    cp ./prime-select $PREFIX/bin
+    cp ./optirun $PREFIX/bin/
+    cp ./nvidia_acpi_on.service $SYSTEMD/
+    cp ./nvidia_acpi_off.service $SYSTEMD/
+    echo 'installed'
+}
+
+remove () {
+    rm $PREFIX/prime-select
+    rm $PREFIX/optirun
+    rm $SYSTEMD/nvidia_acpi_on.service
+    rm $SYSTEMD/nvidia_acpi_off.service
+    echo 'removed'
+}
+
+case "$1" in
+    install)
+        install
+        ;;
+    remove)
+        remove
+        ;;
+    *)
+        echo "Usage: $0 [install|remove]"
+        ;;
+esac

@@ -1,0 +1,75 @@
+#!/bin/bash
+
+blacklist_file='/etc/modprobe.d/blacklist-nvidia.conf'
+
+acpi_on_serv='nvidia_acpi_on.service'
+acpi_off_serv='nvidia_acpi_off.service'
+serv_path='/etc/systemd/system'
+
+modules='# auto generated file
+blacklist nvidia
+blacklist nvidia-drm
+blacklist nvidia-modeset
+alias nvidia off
+alias nvidia-drm off
+alias nvidia-modeset off'
+
+if [ ! "$USER" = "root" ]; then
+    echo 'root privilages needed'
+    exit
+fi
+
+check_service () {
+    if [ ! -f "$serv_path/$acpi_off_serv" ] || [ ! -f "$serv_path/$acpi_on_serv" ]; then
+        echo 'services not found! Please reinstall'
+        exit
+    fi
+}
+
+nvidia_off () {
+    echo "$modules" > $blacklist_file
+    update-initramfs -u -k all
+    systemctl disable nvidia-persistenced.service
+
+    # acpi service
+    systemctl enable $acpi_off_serv
+    systemctl enable $acpi_on_serv
+    
+
+}
+
+nvidia_on () {
+    [ -f $blacklist_file ] && rm $blacklist_file
+    update-initramfs -u -k all
+    systemctl enable nvidia-persistenced.service
+
+    # acpi service
+    systemctl disable $acpi_off_serv
+    systemctl disable $acpi_on_serv
+}
+
+query () {
+    if [ -f "$blacklist_file" ]; then
+        echo intel
+    else 
+        echo nvidia
+    fi
+}
+
+check_service
+
+case "$1" in
+    nvidia)
+        nvidia_on
+        ;;
+    intel)
+        nvidia_off
+        ;;
+    query)
+        query
+        ;;
+    *)
+        echo 'Invalid option!'
+        echo "Usage: $0 [nvidia|intel|query]"
+        ;;
+esac
