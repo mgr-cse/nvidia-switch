@@ -1,1 +1,1 @@
-Utilitues for Debian linux on laptop.
+Utilities for Debian linux on laptop.
