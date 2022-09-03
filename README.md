@@ -1,9 +1,44 @@
-# Utilities
+# nvidia-switch
 
-Utilities for Debian linux on laptop. Each utility is contained in a folder.
+A utility that completely turns of NVIDIA dGPU to save power.
 
-## current list of utilites
+## Prerequisites
 
-* **kparam :** Python/bash scripts for managing kernel parameters for GRUB bootloader.
-* **nvidia-switch :** A utility that completely turns of NVIDIA dGPU to save power.
-* **power :** a tiny script to view current power consumption on laptops while on battery power.
+* acpi-call-dkms
+* initramfs-tools
+* proprietary NVIDIA driver
+
+## Installation
+
+Before installing make sure module **acpi_call** is loaded at boot time. This is done by adding a kmod configuration file.
+
+```bash
+echo acpi_call > /etc/modules-load.d/acpi_call.conf
+```
+
+To install the utility:
+
+```bash
+cd nvidia-switch
+./switch install
+```
+
+To remove the utility:
+
+```bash
+./switch remove
+```
+
+## Usage
+
+To enable integrated graphics only:
+
+```bash
+prime-select intel
+```
+
+To enable hybrid graphics:
+
+```bash
+prime-select nvidia
+```
